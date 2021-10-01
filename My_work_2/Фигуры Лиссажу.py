@@ -14,7 +14,9 @@ wy = 3
 fix = 0
 fiy = 0
 
-t = np.arange(-3.14, 3.15, 0.01)
+step = 0.001
+
+t = np.arange(-np.pi, np.pi+step, step)
 X = Ax * np.sin(wx*t + fix)
 Y = Ay * np.sin(wy*t + fiy)
 plt.plot(X, Y)
