@@ -1,24 +1,24 @@
 #include <iostream>
 #include <cmath>
 
-double two_power(int n)
+float two_power(int n)
 {
     return 1.0/std::pow(2, n);
 }
 
-double harmonic(int n)
+float harmonic(int n)
 {
     return 1.0/n;
 }
 
-double back_squares(int n)
+float back_squares(int n)
 {
     return 1.0/(n*n);
 }
 
-double Sum(int N, double f(int))
+float Sum(int N, float f(int))
 {
-    double sum;
+    float sum;
     for(int i = 1; i<N; ++i)
         sum += f(i);
     return sum;

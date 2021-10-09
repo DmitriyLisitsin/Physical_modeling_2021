@@ -15,6 +15,9 @@ for i in range(iter-1):
     b[i+1] = b[i] - a[i]*k*dt
 
 t = np.arange(iter)
-#plt.plot(t, a)
+plt.plot(t, a)
+plt.show()
+plt.plot(t, b)
+plt.show()
 plt.plot(a, b)
 plt.show()
