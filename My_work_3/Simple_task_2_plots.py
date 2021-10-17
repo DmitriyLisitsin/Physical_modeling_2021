@@ -57,7 +57,7 @@ plt.show()
 fig, ax = plt.subplots()
 ax.plot(t1, a1, 'b')
 ax.plot(t2, a2, 'r')
-ax.plot(t1, )
+ax.plot(t1, R1*np.cos(np.sqrt(k1) * t1), 'b')
 plt.title('x from t', fontsize = 12)
 plt.show()
 #%%
