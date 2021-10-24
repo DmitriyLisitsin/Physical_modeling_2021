@@ -12,21 +12,21 @@ void count()
     type dt, k, R, v0;
 
     int regime = 0;
+    type time_step = 0.1;
 
-
-    type time_step = 0.05;
-    T = 100;
-    R = 6400;
-    v0 = 0;
-    dt = 1.0/pow(10, 5);
-    k = 1.0d;
-
-    if (regime == 1){
+    if (regime == 0){
+        T = 100;
+        R = 6400;
+        v0 = 0;
+        k = 1.0;
+        dt = 1.0/pow(10, 3);
+    }
+    else if (regime == 1){
         T = 1;
         R = 6400;
         v0 = 0;
-        k = 1.0d;
-        dt = 1.0/pow(10, 6);
+        k = 1.0;
+        dt = 1.0/pow(10, 5);
     }
 
     long long int iter = static_cast<long long int> (T/dt);
