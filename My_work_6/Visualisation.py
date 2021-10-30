@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #%%
-file = "Data.txt"
-Data = np.loadtxt(file)
+folder = 'My_work_7'
+file = "/Data.txt"
+Data = np.loadtxt('C:/Олег/Github/Physical_modeling_2021/' + folder + file)
 T = Data[:, 0]
 X = Data[:, 1]
 V = Data[:, 2]

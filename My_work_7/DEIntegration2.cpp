@@ -79,7 +79,8 @@ private:
     std::vector<type> P_old;
     std::vector<type> P_new;
     std::vector<type> P_m;
-    std::vector<type> P_tmp;
+    std::vector<type> P_f1;
+    std::vector<type> P_f2;
     std::vector<type> P_tmp1;
     std::vector<type> P_tmp2;
     std::vector<type> P_comp;
@@ -99,7 +100,8 @@ public:
         P_old = P0;
         std::vector<type> p_new(n, (type)0);
         std::vector<type> p_m(n, (type)0);
-        std::vector<type> p_tmp(n, (type)0);
+        std::vector<type> p_f1(n, (type)0);
+        std::vector<type> p_f2(n, (type)0);
         std::vector<type> p_tmp1(n, (type)0);
         std::vector<type> p_tmp2(n, (type)0);
         std::vector<type> p_comp(n, (type)0);
@@ -109,7 +111,8 @@ public:
 
         P_new = p_new;
         P_m = p_m;
-        P_tmp = p_tmp;
+        P_f1 = p_f1;
+        P_f2 = p_f2;
         P_tmp1 = p_tmp1;
         P_tmp2 = p_tmp2;
         P_comp = p_comp;
@@ -136,9 +139,9 @@ public:
                 ++j;
                 I = 0;
             }
-            expression->f(P_tmp, i*dt, P_old);
+            expression->f(P_f1, i*dt, P_old);
             for(auto i=0; i<n; ++i)
-                P_new[i] = P_old[i] + P_tmp[i]*dt;
+                P_new[i] = P_old[i] + P_f1[i]*dt;
 
             P_old = P_new;
             ++I;
@@ -166,12 +169,12 @@ public:
                 ++j;
                 I = 0;
             }
-            expression->f(P_tmp, i*dt, P_old);
+            expression->f(P_f1, i*dt, P_old);
             for(auto i=0; i<n; ++i)
-                P_m[i] = P_old[i] + P_tmp[i]*dt;
-            expression->f(P_tmp, i*dt, P_m + P_old);
+                P_m[i] = P_old[i] + P_f1[i]*dt;
+            expression->f(P_f2, (i+1)*dt, P_m);
             for(auto i=0; i<n; ++i)
-                P_new[i] = P_old[i] + P_tmp[i]*dt;
+                P_new[i] = P_old[i] + (P_f1[i] + P_f2[i])*dt/2;
 
             P_old = P_new;
             ++I;
@@ -199,9 +202,9 @@ public:
                 ++j;
                 I = 0;
             }
-            expression->f(P_tmp, i*dt, P_old);
+            expression->f(P_f1, i*dt, P_old);
             for(auto i=0; i<n; ++i)
-                P_tmp1[i] = P_tmp[i]*dt - P_comp[i];
+                P_tmp1[i] = P_f1[i]*dt - P_comp[i];
             for(auto i=0; i<n; ++i)
                 P_tmp2[i] = P_old[i] + P_tmp1[i];
             for(auto i=0; i<n; ++i)
@@ -209,9 +212,9 @@ public:
             for(auto i=0; i<n; ++i)
                 P_m[i] = P_tmp2[i];
 
-            expression->f(P_tmp, i*dt, P_m + P_old);
+            expression->f(P_f2, (i+1)*dt, P_m);
             for(auto i=0; i<n; ++i)
-                P_m_tmp1[i] = P_tmp[i]*dt/2 - P_m_comp[i];
+                P_m_tmp1[i] = (P_f1[i] + P_f2[i])*dt/2 - P_m_comp[i];
             for(auto i=0; i<n; ++i)
                 P_m_tmp2[i] = P_old[i] + P_m_tmp1[i];
             for(auto i=0; i<n; ++i)
@@ -252,10 +255,10 @@ int main()
     Solver<double> s;
     PhysicalPend<double> pend1(1.0);
     //std::vector<double> p0 = {2.0, 10.0};
-    s.take_exp(&pend1, {2.0, 10.0});
+    s.take_exp(&pend1, {0.0, 2.0-0.001});
     //s.Euler_solve(10, 0.001, 0.05);
-    s.Hoen_solve(5, 0.001, 0.05);
-    //s.Hoen_solve_with_kahan(5, 0.005, 0.05);
+    s.Hoen_solve(80, 0.001, 0.05);
+    //s.Hoen_solve_with_kahan(50, 0.001, 0.05);
     s.save_data("Data.txt");
     std::cout << "Finished" << '\n';
     return 0;

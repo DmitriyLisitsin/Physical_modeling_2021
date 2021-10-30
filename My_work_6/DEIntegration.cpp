@@ -145,9 +145,9 @@ public:
             v_f1 = expression->f_v(i*dt, x_old, v_old);
             v_m = v_old + v_f1*dt;
 
-            x_f2 = expression->f_x(i*dt, x_m, v_m);
+            x_f2 = expression->f_x((i+1)*dt, x_m, v_m);
             x_new = x_old + (x_f1 + x_f2)*dt/2;
-            v_f2 = expression->f_v(i*dt, x_m, v_m);
+            v_f2 = expression->f_v((i+1)*dt, x_m, v_m);
             v_new = v_old + (v_f1 + v_f2)*dt/2;
 
             x_old = x_new;
@@ -193,13 +193,13 @@ public:
             v_comp = (v_tmp2 - v_old) - v_tmp1;
             v_m = v_tmp2;
 
-            x_f2 = expression->f_x(i*dt, x_m, v_m);
+            x_f2 = expression->f_x((i+1)*dt, x_m, v_m);
             x_m_tmp1 = (x_f1 + x_f2)*dt/2;
             x_m_tmp2 = x_old + x_m_tmp1;
             x_m_comp = (x_m_tmp2 - x_old) - x_m_tmp1;
             x_new = x_m_tmp2;
 
-            v_f2 = expression->f_v(i*dt, x_m, v_m);
+            v_f2 = expression->f_v((i+1)*dt, x_m, v_m);
             v_m_tmp1 = (v_f1 + v_f2)*dt/2;
             v_m_tmp2 = v_old + v_m_tmp1;
             v_m_comp = (v_m_tmp2 - v_old) - v_m_tmp1;
