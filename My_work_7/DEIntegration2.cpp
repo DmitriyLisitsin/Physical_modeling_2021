@@ -5,42 +5,6 @@
 #include <string>
 #include <iomanip>
 
-template<typename type>
-std::vector<type> & operator+(std::vector<type> &left, std::vector<type> const &right)
-{
-    for(auto i=0; i<left.size(); ++i){
-        left[i] += right[i];
-    }
-    return left;
-}
-
-template<typename type>
-std::vector<type> & operator-(std::vector<type> &left, std::vector<type> const &right)
-{
-    for(auto i=0; i<left.size(); ++i){
-        left[i] -= right[i];
-    }
-    return left;
-}
-
-template<typename type>
-std::vector<type> & operator*(std::vector<type> & left, type right)
-{
-    for(auto i=0; i<left.size(); ++i){
-        left[i] *= right;
-    }
-    return left;
-}
-
-template<typename type>
-std::vector<type> & operator/(std::vector<type> & left, type right)
-{
-    for(auto i=0; i<left.size(); ++i){
-        left[i] /= right;
-    }
-    return left;
-}
-
 
 template<typename type>
 class Exp {
@@ -170,11 +134,11 @@ public:
                 I = 0;
             }
             expression->f(P_f1, i*dt, P_old);
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_m[i] = P_old[i] + P_f1[i]*dt;
             expression->f(P_f2, (i+1)*dt, P_m);
-            for(auto i=0; i<n; ++i)
-                P_new[i] = P_old[i] + (P_f1[i] + P_f2[i])*dt/2;
+            for(int i=0; i<n; ++i)
+                P_new[i] = P_old[i] + (P_f1[i] + P_f2[i])*dt*0.5;
 
             P_old = P_new;
             ++I;
@@ -203,23 +167,23 @@ public:
                 I = 0;
             }
             expression->f(P_f1, i*dt, P_old);
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_tmp1[i] = P_f1[i]*dt - P_comp[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_tmp2[i] = P_old[i] + P_tmp1[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_comp[i] = (P_tmp2[i] - P_old[i]) - P_tmp1[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_m[i] = P_tmp2[i];
 
             expression->f(P_f2, (i+1)*dt, P_m);
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_m_tmp1[i] = (P_f1[i] + P_f2[i])*dt/2 - P_m_comp[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_m_tmp2[i] = P_old[i] + P_m_tmp1[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_m_comp[i] = (P_m_tmp2[i] - P_old[i]) - P_m_tmp1[i];
-            for(auto i=0; i<n; ++i)
+            for(int i=0; i<n; ++i)
                 P_new[i] = P_m_tmp2[i];
 
             P_old = P_new;
@@ -255,7 +219,7 @@ int main()
     Solver<double> s;
     PhysicalPend<double> pend1(1.0);
     //std::vector<double> p0 = {2.0, 10.0};
-    s.take_exp(&pend1, {0.0, 2.0-0.001});
+    s.take_exp(&pend1, {0.0, 5.0});
     //s.Euler_solve(10, 0.001, 0.05);
     s.Hoen_solve(80, 0.001, 0.05);
     //s.Hoen_solve_with_kahan(50, 0.001, 0.05);
