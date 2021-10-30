@@ -63,6 +63,7 @@ private:
     std::vector<type> X;
     std::vector<type> V;
     std::vector<type> T;
+    type x_f1, x_f2, v_f1, v_f2;
     type x_old, x_new, x_tmp1, x_tmp2, x_comp = (type)0;
     type x_m, x_m_tmp1, x_m_tmp2, x_m_comp = (type)0;
     type v_old, v_new, v_tmp1, v_tmp2, v_comp = (type)0;
@@ -74,6 +75,7 @@ public:
     void take_exp(Exp<type>* exp, type x0, type v0)
     {
         expression = exp;
+        x_f1 = x_f2 = v_f1 = v_f2 = (type)0;
         x_old = x_new = x_tmp1 = x_tmp2 = x_comp = (type)0;
         x_m = x_m_tmp1 = x_m_tmp2 = x_m_comp = (type)0;
         v_old = v_new = v_tmp1 = v_tmp2 = v_comp = (type)0;
@@ -138,11 +140,15 @@ public:
                 ++j;
                 I = 0;
             }
-            x_m = x_old + expression->f_x(i*dt, x_old, v_old)*dt;
-            v_m = v_old + expression->f_v(i*dt, x_old, v_old)*dt;
+            x_f1 = expression->f_x(i*dt, x_old, v_old);
+            x_m = x_old + x_f1*dt;
+            v_f1 = expression->f_v(i*dt, x_old, v_old);
+            v_m = v_old + v_f1*dt;
 
-            x_new = x_old + expression->f_x(i*dt, x_old + x_m, v_old + v_m)*dt/2;
-            v_new = v_old + expression->f_v(i*dt, x_old + x_m, v_old + v_m)*dt/2;
+            x_f2 = expression->f_x(i*dt, x_m, v_m);
+            x_new = x_old + (x_f1 + x_f2)*dt/2;
+            v_f2 = expression->f_v(i*dt, x_m, v_m);
+            v_new = v_old + (v_f1 + v_f2)*dt/2;
 
             x_old = x_new;
             v_old = v_new;
@@ -175,22 +181,26 @@ public:
                 ++j;
                 I = 0;
             }
-            x_tmp1 = expression->f_x(i*dt, x_old, v_old)*dt - x_comp;
+            x_f1 = expression->f_x(i*dt, x_old, v_old);
+            x_tmp1 = x_f1*dt - x_comp;
             x_tmp2 = x_old + x_tmp1;
             x_comp = (x_tmp2 - x_old) - x_tmp1;
             x_m = x_tmp2;
 
-            v_tmp1 = expression->f_v(i*dt, x_old, v_old)*dt - v_comp;
+            v_f1 = expression->f_x(i*dt, x_m, v_m);
+            v_tmp1 = v_f1*dt - v_comp;
             v_tmp2 = v_old + v_tmp1;
             v_comp = (v_tmp2 - v_old) - v_tmp1;
             v_m = v_tmp2;
 
-            x_m_tmp1 = expression->f_x(i*dt, x_old + x_m, v_old + v_m)*dt/2;
+            x_f2 = expression->f_x(i*dt, x_m, v_m);
+            x_m_tmp1 = (x_f1 + x_f2)*dt/2;
             x_m_tmp2 = x_old + x_m_tmp1;
             x_m_comp = (x_m_tmp2 - x_old) - x_m_tmp1;
             x_new = x_m_tmp2;
 
-            v_m_tmp1 = expression->f_v(i*dt, x_old + x_m, v_old + v_m)*dt/2;
+            v_f2 = expression->f_v(i*dt, x_m, v_m);
+            v_m_tmp1 = (v_f1 + v_f2)*dt/2;
             v_m_tmp2 = v_old + v_m_tmp1;
             v_m_comp = (v_m_tmp2 - v_old) - v_m_tmp1;
             v_new = v_m_tmp2;
@@ -225,9 +235,9 @@ int main()
 {
     Solver<double> s;
     PhysicalPend<double> pend1(1.0);
-    s.take_exp(&pend1, 0.0, 1.00);
-    s.Euler_solve(100, 0.001, 0.05);
-    //s.Hoen_solve(120, 0.001, 0.05);
+    s.take_exp(&pend1, 0.0, 2.00+0.00000);
+    //s.Euler_solve(100, 0.001, 0.05);
+    s.Hoen_solve(80, 0.001, 0.05);
     //s.Hoen_solve_with_kahan(100, 0.001, 0.05);
     s.save_data("Data.txt");
 

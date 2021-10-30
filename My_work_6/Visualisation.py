@@ -21,6 +21,6 @@ plt.title('v from t', fontsize = 12)
 plt.show()
 #%%
 fig, ax = plt.subplots()
-ax.plot(T, E, 'r')
+ax.plot(T, (E-E[0]), 'r')
 plt.title('E from t', fontsize = 12)
 plt.show()
