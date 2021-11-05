@@ -39,7 +39,10 @@ Wf = fftfreq(np.size(T), T[2]-T[1])
 plt.plot(Wf, Xf)
 plt.show()
 
-
+#%%
+i, = np.where(Xf == np.max(Xf))
+print(i)
+print(Wf[i]*2*np.pi)
 #%%
 fig, ax = plt.subplots()
 ax.plot(T, X, 'b')
