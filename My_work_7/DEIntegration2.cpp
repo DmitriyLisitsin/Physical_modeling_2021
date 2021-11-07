@@ -20,19 +20,64 @@ template<typename type>
 class PhysicalPend: public Exp<type> {
 private:
     const unsigned int n = 2;
-    type a;
+    type k;
 
 public:
-    PhysicalPend(type b): a{b} {}
+    PhysicalPend(type b): k{b} {}
 
     void f(std::vector<type> &P_new, type t, std::vector<type> &P_old) const override
     {
         P_new[0] = P_old[1];
-        P_new[1] = -a*std::sin(P_old[0]);
+        P_new[1] = -k*std::sin(P_old[0]);
     }
 
     const unsigned int get_n() const override {return n;}
 };
+
+
+template<typename type>
+class FrictionPend: public Exp<type> {
+private:
+    const unsigned int n = 2;
+    type w;
+    type b;
+    type w2;
+
+public:
+    FrictionPend(type w0, type b0): w{w0}, b{b0} {w2 = w*w;}
+
+    void f(std::vector<type> &P_new, type t, std::vector<type> &P_old) const override
+    {
+        P_new[0] = P_old[1];
+        P_new[1] = -w2*P_old[0] - b*P_old[1];
+    }
+
+    const unsigned int get_n() const override {return n;}
+};
+
+
+template<typename type>
+class FrictionPendWithForce: public Exp<type> {
+private:
+    const unsigned int n = 2;
+    type w;
+    type w2;
+    type b;
+    type F;
+    type W;
+
+public:
+    FrictionPendWithForce(type w0, type b0, type F0, type W0): w{w0}, b{b0}, F{F0}, W{W0} {w2 = w*w;}
+
+    void f(std::vector<type> &P_new, type t, std::vector<type> &P_old) const override
+    {
+        P_new[0] = P_old[1];
+        P_new[1] = -w2*P_old[0] - b*P_old[1] + F*std::cos(W*t);
+    }
+
+    const unsigned int get_n() const override {return n;}
+};
+
 
 
 template<typename type>
@@ -217,13 +262,14 @@ public:
 int main()
 {
     Solver<double> s;
-    PhysicalPend<double> pend1(1.0);
-    //std::vector<double> p0 = {2.0, 10.0};
-    s.take_exp(&pend1, {0.0, 5.0});
+    FrictionPendWithForce<double> pend1(1.0, 0.1, 2.0, 1.3);
+    //FrictionPend<double> pend1(1.0, 0.1);
+
+    s.take_exp(&pend1, {0.0, 1.0});
     //s.Euler_solve(10, 0.001, 0.05);
-    s.Hoen_solve(80, 0.001, 0.05);
+    s.Hoen_solve(150, 0.001, 0.05);
     //s.Hoen_solve_with_kahan(50, 0.001, 0.05);
-    s.save_data("Data.txt");
+    s.save_data("Data_friction_with_force.txt");
     std::cout << "Finished" << '\n';
     return 0;
 }
