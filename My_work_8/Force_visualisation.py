@@ -1,46 +1,9 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
+import oscillation_functions as of
 #%%
-def friction_oscillation(T, w0, b, x0, v0):
-    if w0 > b/2:
-        w = np.sqrt(w0**2-(b/2)**2)
-        if x0 == 0.0:
-            fi0 = np.pi/2
-            A = v0/w
-        else:
-            fi0 = np.arctan((v0+x0*b/2)/x0/w)
-            A = x0/np.cos(fi0)
-        return A*np.cos(w*T-fi0)*np.exp(-b/2*T)
-    elif w0 < b/2:
-        u = np.sqrt((b/2)**2-w0**2)
-        C1 = (x0*(u+b/2)+v0)/2/u
-        C2 = x0-C1
-        return (C1*np.exp(u*T) + C2*np.exp(-u*T))*np.exp(-b/2*T)
-    else:
-        print('here')
-        return (x0+(v0+x0*b/2)*T)*np.exp(-b/2*T)
-
-#%%
-def count_amplitude(w0, b, W, F0):
-    return w0**2*F0/np.sqrt((w0**2-W**2)**2 + b**2*W**2)
-
-def count_phase(w0, b, W):
-    return np.arctan2(b*W, w0**2-W**2)
-#%%
-def force_oscillation(T, W, F0, w0, b, x0, v0):
-    psi0 = count_amplitude(w0, b, W, F0)
-    B = count_phase(w0, b, W)
-    return B*np.cos(W*T-psi0) + friction_oscillation(T, w0, b, x0-B*np.cos(psi0), v0-B*W*np.sin(psi0))
-
-#%%
-def get_frequency(t, Y):
-    f = np.fft.fftfreq(len(t), t[1]-t[0])
-    Yf = np.abs(np.fft.fft(Y))
-    return np.abs(f[np.argmax(Yf[1:])+1])
-
-#%%
-a = 11
+a = 5
 folder = 'Force_pend_data/'
 solver = ['Heun/', 'Euler/'][0]
 prefix  = 'Data' + '_'
@@ -51,7 +14,8 @@ X = Data[:, 1]
 V = Data[:, 2]
 
 x0, v0, w0, b, W, F0 = np.loadtxt(folder + name, max_rows=1)
-E = V**2/2 + (w0**2 - (b/2)**2) * X**2/2
+#E = V**2/2 + (w0**2 - (b/2)**2) * X**2/2
+E = V**2/2 + w0**2 * X**2/2
 
 #%%
 if_second = 0
@@ -71,35 +35,18 @@ if(if_second):
 #%%
 print('Частота: ', W)
 
-Q = np.round((w02**2 - (b2/2)**2)/b, 5)
+Q = np.round((w0**2 - (b/2)**2)/b, 4)
 print('Добротность: ', Q)
 
-#%%
-s = 0
-periods = 0
-T0 = 0
-T1 = 0
-beg = np.size(T)//2
-end = np.size(T)//1
-for i in range(beg, end-1):
-    if V[i] >= 0 and V[i+1] < 0:
-        periods += 1
-        if s == 0:
-            s = 1
-            T0 = i
-            periods -= 1
-        elif s == 1:
-            T1 = i
-w_exp1 = np.round(2*np.pi / ((T1 - T0) * (T[2] - T[1]))*periods, 5)
+w_exp1 = np.round(2*np.pi * of.count_frequency(T, V), 3)
 print('Эксп.частота 1: ', w_exp1)
 
-#%%
-w_exp2 = np.round(2*np.pi*get_frequency(T, X), 3)
+w_exp2 = np.round(2*np.pi*of.count_fft_frequency(T, X), 3)
 print('Эксп.частота 2: ', w_exp2)
 #%%
 fig, ax = plt.subplots()
 ax.plot(T, X, label=solver)
-Xt = force_oscillation(T, W, F0, w0, b, x0, v0)
+Xt = of.force_oscillation(T, W, F0, w0, b, x0, v0)
 ax.plot(T, Xt, label='analitic')
 if(if_second):
     ax.plot(T2, X2, label=solver2)
