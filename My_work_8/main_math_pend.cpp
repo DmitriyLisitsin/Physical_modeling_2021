@@ -19,7 +19,11 @@ int main()
     double x0 = 1.0;
     double v0 = 0.0;
 
-    std::string name = "Data_math_pend.txt";
+    int a = 1;
+
+    std::string folder = "Force_pend_data/";
+    std::string name1 = "Heun/Data_" + std::to_string(a) + ".txt";
+    std::string name2 = "Euler/Data_" + std::to_string(a) + ".txt";
 
     Solver<double> s;
     HeunSolver<double> hs;
@@ -28,7 +32,7 @@ int main()
 
     hs.take_exp(&pend, {x0, v0});
     hs.solve(T, dt, tau);
-    save_data(name, hs.get_time(), hs.get_values(), {x0, v0, w}, 2);
+    save_data(folder+name1, hs.get_time(), hs.get_values(), {x0, v0, w}, 2);
 
 //    s.take_exp(&pend, {x0, v0});
 //    s.solve(T, dt, tau);

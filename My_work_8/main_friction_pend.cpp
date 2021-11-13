@@ -23,8 +23,8 @@ int main()
     int a = 4;
 
     std::string folder = "Friction_pend_data/";
-    std::string name1 = "Heun_" + std::to_string(a) + ".txt";
-    std::string name2 = "Euler_" + std::to_string(a) + ".txt";
+    std::string name1 = "Heun/Data_" + std::to_string(a) + ".txt";
+    std::string name2 = "Euler/Data_" + std::to_string(a) + ".txt";
 
     Solver<double> s;
     HeunSolver<double> hs;

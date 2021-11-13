@@ -1,13 +1,19 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fft import fft, fftfreq
-
+#from scipy.fft import fft, fftfreq
+#%%
+def get_frequency(t, Y):
+    f = np.fft.fftfreq(len(t), t[1]-t[0])
+    Yf = np.abs(np.fft.fft(Y))
+    return np.abs(f[np.argmax(Yf[1:])+1])
+    
 #%%
 a = 1
 folder = 'Force_pend_data/'
-solver = ['Heun_', 'Euler_'][0]
-name = solver + str(a) + ".txt"
+solver = ['Heun/', 'Euler/'][0]
+prefix  = 'Data' + '_'
+name = solver + prefix + str(a) + '.txt'
 Data = np.loadtxt(folder + name, skiprows=1)
 T = Data[:, 0]
 X = Data[:, 1]
@@ -19,6 +25,9 @@ E = V**2/2 + (w0**2 - (b/2)**2) * X**2/2
 #%%
 w = np.round(np.sqrt(w0**2 - (b/2)**2), 5)
 print('Частота: ', w)
+
+w_exp = np.round(2*np.pi*get_frequency(T, X), 3)
+print('Эксп.частота: ', w_exp)
 
 Q = np.round(w/b, 5)
 print('Добротность: ', Q)
@@ -57,4 +66,5 @@ plt.show()
 i, = np.where(Xf == np.max(Xf))
 print(i)
 print(Wf[i]*2*np.pi)
+#%%
 

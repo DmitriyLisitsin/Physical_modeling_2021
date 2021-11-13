@@ -34,10 +34,17 @@ def force_oscillation(T, W, F0, w0, b, x0, v0):
     return B*np.cos(W*T-psi0) + friction_oscillation(T, w0, b, x0-B*np.cos(psi0), v0-B*W*np.sin(psi0))
 
 #%%
+def get_frequency(t, Y):
+    f = np.fft.fftfreq(len(t), t[1]-t[0])
+    Yf = np.abs(np.fft.fft(Y))
+    return np.abs(f[np.argmax(Yf[1:])+1])
+
+#%%
 a = 11
 folder = 'Force_pend_data/'
-solver = ['Heun_', 'Euler_'][0]
-name = solver + str(a) + ".txt"
+solver = ['Heun/', 'Euler/'][0]
+prefix  = 'Data' + '_'
+name = solver + prefix + str(a) + '.txt'
 Data = np.loadtxt(folder + name, skiprows=1)
 T = Data[:, 0]
 X = Data[:, 1]
@@ -50,8 +57,9 @@ E = V**2/2 + (w0**2 - (b/2)**2) * X**2/2
 if_second = 0
 if(if_second):
     folder2 = 'Force_pend_data/'
-    solver2 = ['Heun_', 'Euler_'][1]
-    name2 = solver2 + str(a) + ".txt"
+    solver2 = ['Heun/', 'Euler/'][1]
+    prefix2  = 'Data' + '_'
+    name2 = solver2 + prefix + str(a) + ".txt"
     Data2 = np.loadtxt(folder2 + name2,  skiprows=1)
     T2 = Data2[:, 0]
     X2 = Data2[:, 1]
@@ -82,9 +90,12 @@ for i in range(beg, end-1):
             periods -= 1
         elif s == 1:
             T1 = i
-w_exp = np.round(2*np.pi / ((T1 - T0) * (T[2] - T[1]))*periods, 5)
-print('Эксп.частота: ', w_exp)
+w_exp1 = np.round(2*np.pi / ((T1 - T0) * (T[2] - T[1]))*periods, 5)
+print('Эксп.частота 1: ', w_exp1)
 
+#%%
+w_exp2 = np.round(2*np.pi*get_frequency(T, X), 3)
+print('Эксп.частота 2: ', w_exp2)
 #%%
 fig, ax = plt.subplots()
 ax.plot(T, X, label=solver)
