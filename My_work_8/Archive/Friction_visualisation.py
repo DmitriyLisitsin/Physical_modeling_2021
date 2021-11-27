@@ -28,7 +28,7 @@ if(if_second):
     X2 = Data2[:, 1]
     V2 = Data2[:, 2]
     
-    x02, v02, w02, b2= np.loadtxt(folder2 + name2, max_rows=1)
+    x02, v02, w02, b2 = np.loadtxt(folder2 + name2, max_rows=1)
     E2 = V2**2/2 + (w02**2 - (b2/2)**2) * X2**2/2
 
 #%%

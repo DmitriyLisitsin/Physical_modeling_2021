@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import oscillation_functions as of
 #%%
-a = 5
+a = 17
 folder = 'Force_pend_data/'
-solver = ['Heun/', 'Euler/'][0]
+solver = ['Heun/', 'Euler/', 'RK4/'][0]
 prefix  = 'Data' + '_'
 name = solver + prefix + str(a) + '.txt'
 Data = np.loadtxt(folder + name, skiprows=1)
@@ -18,10 +18,10 @@ x0, v0, w0, b, W, F0 = np.loadtxt(folder + name, max_rows=1)
 E = V**2/2 + w0**2 * X**2/2
 
 #%%
-if_second = 0
+if_second = 1
 if(if_second):
     folder2 = 'Force_pend_data/'
-    solver2 = ['Heun/', 'Euler/'][1]
+    solver2 = ['Heun/', 'Euler/', 'RK4/'][2]
     prefix2  = 'Data' + '_'
     name2 = solver2 + prefix + str(a) + ".txt"
     Data2 = np.loadtxt(folder2 + name2,  skiprows=1)

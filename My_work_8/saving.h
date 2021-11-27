@@ -8,13 +8,20 @@
 
 template<typename type>
 void save_data(std::string path, std::vector<type> const &T,
-               std::vector<std::vector<type>> const &P, std::vector<type> const &params, int n)
+                std::vector<std::vector<type>> const &P,
+                std::vector<type> const & Force,
+                std::vector<type> const & E,
+                std::vector<type> const & P0,
+                std::vector<type> const &params, int n)
     {
         std::ofstream out;
         out.open(path);
         if (out.is_open()){
             out << std::setprecision(8);
             out << std::scientific;
+            for(int i = 0; i<P0.size(); ++i){
+                out << P0[i] << ' ';
+            }
             for(int i = 0; i<params.size()-1; ++i){
                 out << params[i] << ' ';
             }
@@ -24,7 +31,7 @@ void save_data(std::string path, std::vector<type> const &T,
                 for(int j=0; j<n; ++j){
                     out << ' ' << P[i][j] << ' ';
                 }
-                out << '\n';
+                out << Force[i] << ' ' << E[i] << '\n';
             }
         }
         out.close();

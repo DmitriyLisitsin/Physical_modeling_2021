@@ -35,6 +35,12 @@ def count_fft_frequency(t, Y):
     Yf = np.abs(np.fft.fft(Y))
     return np.abs(f[np.argmax(Yf[1:])+1])
 
+def ang_frequency(b, w0):
+    return np.sqrt(w0**2-(b/2)**2)
+
+def q_factor(b, w0):
+    return np.sqrt(w0**2-(b/2)**2)/b
+
 def count_q_factor(T, V, X, b = None, e = None):
     s = 0
     periods = 0
@@ -75,7 +81,15 @@ def count_frequency(T, V, b = None, e = None):
 def count_amplitude(X, b = None, e = None):
     beg = b or 2*np.size(X)//3
     end = e or np.size(X)
-    return np.mean(-np.partition(-np.abs(X[::-1]), end-beg)[:end-beg])
+    #return np.mean(-np.partition(-np.abs(X[::-1]), end-beg)[:end-beg])
+    return np.max(X[beg:end])
+
+def count_amplitude2(X, b = None, e = None):
+    beg = b or 9*np.size(X)//3
+    end = e or np.size(X)
+    Amax = np.max(X[beg:end])
+    Amin = np.min(X[beg:end])
+    return( Amax - Amin)/2
 
 if __name__ == "__main__":
     print("This module is not for direct call!")

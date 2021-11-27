@@ -6,7 +6,7 @@
 #include "rk4_solver.h"
 #include "saving.h"
 
-#include "pend_with_friction_and_force.h"
+#include "arbitrary_pend1.h"
 
 template<typename type>
 void process(type T, type dt, type tau, type w, type b, type W, type F0, type x0, type v0,
@@ -17,30 +17,30 @@ void process(type T, type dt, type tau, type w, type b, type W, type F0, type x0
     HeunSolver<type> hs;
     RK4Solver<type> rks;
 
-    FrictionPendWithForce<type> pend1(w, b, W, F0);
+    ArbitraryPend1<type> pend1(w, b, W, F0);
 
     if(sh){
         hs.take_exp(&pend1, {x0, v0});
         hs.solve(T, dt, tau);
-        save_data(file2, hs.get_time(), hs.get_values(), {x0, v0, w, b, W, F0}, 2);
+        save_data(file2, hs.get_time(), hs.get_values(), hs.get_energy(), {x0, v0, w, b, W, F0}, 2);
     }
 
     if(se){
         s.take_exp(&pend1, {x0, v0});
         s.solve(T, dt, tau);
-        save_data(file1, s.get_time(), s.get_values(), {x0, v0, w, b, W, F0}, 2);
+        save_data(file1, s.get_time(), s.get_values(), s.get_energy(), {x0, v0, w, b, W, F0}, 2);
     }
     if(srk){
         rks.take_exp(&pend1, {x0, v0});
-        rks.solve(T, 100*dt, tau);
-        save_data(file3, rks.get_time(), rks.get_values(), {x0, v0, w, b, W, F0}, 2);
+        rks.solve(T, dt, tau);
+        save_data(file3, rks.get_time(), rks.get_values(), rks.get_energy(), {x0, v0, w, b, W, F0}, 2);
     }
 }
 
 int main()
 {
-    std::string folder = "Force_pend_data/";
-    std::string par = "Params.txt";
+    std::string folder = "Arbitrary_pend_data/";
+    std::string par = "Params_arbitrary.txt";
 
     int a, se, sh, srk, shh;
     double T, dt, tau, w, b, W, F0, x0, v0;
@@ -109,26 +109,10 @@ int main()
     std::string name2 = "Heun/Data_" + std::to_string(a) + ".txt";
     std::string name1 = "Euler/Data_" + std::to_string(a) + ".txt";
 
-    //std::string name2 = "FR/Heun/Data_" + std::to_string(a) + ".txt";
-    //std::string name1 = "FR/Euler/Data_" + std::to_string(a) + ".txt";
-
     process(T, dt, tau, w, b, W, F0, x0, v0, folder+name1, folder+name2, folder+name3, "", se, sh, srk, shh);
 
     ChangeStringInFileC(folder+par, CountLinesInFile(folder+par)-1, std::to_string(a+1));
 
-//    std::vector<double> Wa = {0.3, 0.35, 0.4, 0.45, 0.50, 0.55, 0.60, 0.64, 0.68, 0.72, 0.76, 0.80, 0.82, 0.84, 0.86,
-//                            0.88, 0.90, 0.92, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0, 1.01, 1.02, 1.03, 1.04,
-//                            1.05, 1.06, 1.08, 1.10, 1.12, 1.14, 1.16, 1.18, 1.2, 1.24, 1.28, 1.32, 1.36, 1.4, 1.45,
-//                            1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8, 1.85, 1.9, 1.95, 2.0};
-//    for(int i=0; i<Wa.size(); ++i){
-//        std::cout << Wa[i] << '\n';
-//        process(T, dt, tau, w, b, Wa[i], F0, x0, v0,
-//                folder+"FR/Euler/Data_"+std::to_string(i+1)+".txt", folder+"FR/Heun/Data_"+std::to_string(i+1) + ".txt",
-//                "", se, sh, shh);
-//    }
     std::cout << "Finished" << '\n';
     return 0;
 }
-
-
-

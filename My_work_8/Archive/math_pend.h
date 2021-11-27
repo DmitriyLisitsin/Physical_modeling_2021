@@ -19,6 +19,11 @@ public:
         P_new[1] = -a*P_old[0];
     }
 
+    type energy(std::vector<type> const& P)
+    {
+        return 0.5*(std::pow(w*P[0], 2) + std::pow(P[1], 2));
+    }
+
     const unsigned int get_n() const override {return n;}
 };
 

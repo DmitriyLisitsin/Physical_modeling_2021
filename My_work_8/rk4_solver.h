@@ -1,5 +1,5 @@
-#ifndef solver_h
-#define solver_h
+#ifndef rk4_solver_h
+#define rk4_solver_h
 
 #include "expression.h"
 
@@ -7,12 +7,16 @@
 #include <vector>
 
 template<typename type>
-class Solver{
+class RK4Solver{
 private:
     unsigned int n;
     Exp<type>* expression;
     std::vector<type> P;
+    std::vector<type> P_m;
     std::vector<type> P_f1;
+    std::vector<type> P_f2;
+    std::vector<type> P_f3;
+    std::vector<type> P_f4;
     std::vector<std::vector<type>> P_w;
     std::vector<type> Force;
     std::vector<type> E;
@@ -20,7 +24,7 @@ private:
     type time;
 
 public:
-    Solver() {}
+    RK4Solver() {}
 
     void take_exp(Exp<type>* exp, std::vector<type> P0)
     {
@@ -28,16 +32,34 @@ public:
         expression = exp;
         P = P0;
         std::vector<type> p_f1(n, 0.0);
+        std::vector<type> p_f2(n, 0.0);
+        std::vector<type> p_f3(n, 0.0);
+        std::vector<type> p_f4(n, 0.0);
+        std::vector<type> p_m(n, 0.0);
 
         P_f1 = p_f1;
+        P_f2 = p_f2;
+        P_f3 = p_f3;
+        P_f4 = p_f4;
+        P_m = p_m;
         time = 0.0;
     }
 
+    inline
     void iter(type dt)
     {
         expression->f(P_f1, time, P);
         for(int i=0; i<n; ++i)
-            P[i] += P_f1[i]*dt;
+            P_m[i] = P[i] + 0.5*P_f1[i]*dt;
+        expression->f(P_f2, time+0.5*dt, P_m);
+        for(int i=0; i<n; ++i)
+            P_m[i] = P[i] + 0.5*P_f2[i]*dt;
+        expression->f(P_f3, time+0.5*dt, P_m);
+        for(int i=0; i<n; ++i)
+            P_m[i] = P[i] + P_f3[i]*dt;
+        expression->f(P_f4, time+dt, P_m);
+        for(int i=0; i<n; ++i)
+            P[i] += (P_f1[i] + 2*P_f2[i] + 2*P_f3[i] + P_f4[i])*dt/6;
     }
 
     void solve(type time0, type dt, type tau)
@@ -68,7 +90,6 @@ public:
             time = (i+1)*dt;
             ++I;
         }
-
         P_w = p_w;
         Force = force;
         E = e;
@@ -83,4 +104,4 @@ public:
 
     std::vector<type> get_energy() {return E;}
 };
-#endif // solver_h
+#endif // rk4_solver_h
