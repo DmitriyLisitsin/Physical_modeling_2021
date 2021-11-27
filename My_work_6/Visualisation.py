@@ -5,7 +5,7 @@ from scipy.fft import fft, fftfreq
 
 #%%
 folder = 'My_work_7'
-file = "/Data.txt"
+file = "/Data_friction_with_force.txt"
 Data = np.loadtxt('C:/Олег/Github/Physical_modeling_2021/' + folder + file)
 T = Data[:, 0]
 X = Data[:, 1]
