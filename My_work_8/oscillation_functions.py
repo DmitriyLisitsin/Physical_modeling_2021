@@ -16,7 +16,6 @@ def friction_oscillation(T, w0, b, x0, v0):
         C2 = x0-C1
         return (C1*np.exp(u*T) + C2*np.exp(-u*T))*np.exp(-b/2*T)
     else:
-        print('here')
         return (x0+(v0+x0*b/2)*T)*np.exp(-b/2*T)
 
 def amplitude(w0, b, W, F0):
@@ -29,6 +28,46 @@ def force_oscillation(T, W, F0, w0, b, x0, v0):
     B = amplitude(w0, b, W, F0)
     psi0 = phase(w0, b, W)
     return B*np.cos(W*T-psi0) + friction_oscillation(T, w0, b, x0-B*np.cos(psi0), v0-B*W*np.sin(psi0))
+    #return B*np.cos(W*T-psi0)
+
+def sinus_response(T, W, F0, w0, b):
+    B = amplitude(w0, b, W, F0)
+    psi0 = phase(w0, b, W)
+    return B*np.cos(W*T-psi0)
+
+def impulses_response(T, W, tau, F0, w0, b, x0, v0, n_harmonics):
+    Xt = np.zeros(len(T))
+    I = np.arange(1, n_harmonics+1)
+    Wi = I*W
+    F = 2*F0/I/np.pi*np.sin(Wi*tau*0.5)
+    B = amplitude(w0, b, Wi, F)
+    psi0 = phase(w0, b, Wi)
+    Xt += W*0.5/np.pi*tau*F0
+    x0 -= W*0.5/np.pi*tau*F0
+    for i in range(0, n_harmonics):
+        Xt += B[i]*np.cos(Wi[i]*T-psi0[i])
+        x0 -= B[i]*np.cos(psi0[i])
+        v0 -= B[i]*Wi[i]*np.sin(psi0[i])
+    return Xt + friction_oscillation(T, w0, b, x0, v0)
+
+
+def cut_cos_response(T, W, F0, w0, b, x0, v0, n_harmonics):
+    Xt = np.zeros(len(T))
+    I = np.arange(1, n_harmonics+1)
+    Wi = 2*I*W
+    F = 2 * F0 / np.pi * (-1)**I / (1-(2*I)**2)
+    B = amplitude(w0, b, W, F0)
+    psi0 = phase(w0, b, W)
+    Xt += F0/np.pi + 0.5*B*np.cos(W*T-psi0)
+    x0 -= F0/np.pi + 0.5*B*np.cos(psi0)
+    v0 -= 0.5*B*W*np.sin(psi0)
+    B = amplitude(w0, b, Wi, F)
+    psi0 = phase(w0, b, Wi)
+    for i in range(0, n_harmonics):
+        Xt += B[i]*np.cos(Wi[i]*T-psi0[i])
+        x0 -= B[i]*np.cos(psi0[i])
+        v0 -= B[i]*Wi[i]*np.sin(psi0[i])
+    return Xt + friction_oscillation(T, w0, b, x0, v0)
 
 def count_fft_frequency(t, Y):
     f = np.fft.fftfreq(len(t), t[1]-t[0])

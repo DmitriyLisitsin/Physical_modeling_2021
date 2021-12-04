@@ -81,7 +81,7 @@ int main()
         out.close();
     }
 
-    ArbitraryPend2<double> pendl(w, b, W, F0);     // can be changed
+    ArbitraryPend1<double> pendl(w, b, W, F0);     // can be changed
 
     std::string name3 = "RK4/Data_" + std::to_string(a) + ".txt";
     std::string name2 = "Heun/Data_" + std::to_string(a) + ".txt";

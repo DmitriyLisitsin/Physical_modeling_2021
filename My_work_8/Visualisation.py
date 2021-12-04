@@ -1,8 +1,9 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
+import oscillation_functions as of
 #%%
-a = 1
+a = 5
 folder = 'Arbitrary_pend_data/'
 solver = ['Heun/', 'Euler/', 'RK4/'][2]
 prefix  = 'Data' + '_'
@@ -32,7 +33,10 @@ if(if_second):
 #%%
 fig, [[ax1, ax2], [ax3, ax4]] = plt.subplots(2, 2)
 ax1.plot(T, X, label=solver)
-ax1.plot(T, F)
+#ax1.plot(T, of.impulses_response(T, W, np.pi/W, F0, w0, b, x0, v0, 100))
+ax1.plot(T, of.cut_cos_response(T, W, F0, w0, b, x0, v0, 100))
+#ax1.plot(T, F)
+
 if(if_second):
     ax1.plot(T2, X2, label=solver2)
 ax1.legend(loc='lower right', fontsize=12)

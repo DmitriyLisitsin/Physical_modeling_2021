@@ -22,12 +22,12 @@ public:
     void f(std::vector<type> &P_new, type t, std::vector<type> &P_old) const override
     {
         P_new[0] = P_old[1];
-        P_new[1] = -w2*P_old[0] - b*P_old[1] + ((std::sin(W*t) > 0.0) ? F : 0.0);
+        P_new[1] = -w2*P_old[0] - b*P_old[1] + force(t, P_old);
     }
 
     type force(type t, std::vector<type> const& P) const override
     {
-        return ((std::sin(W*t) > 0.0) ? F : 0.0);
+        return ((std::cos(W*t) > 0.0) ? F : 0.0);
     }
 
     type energy(std::vector<type> const& P) const override
