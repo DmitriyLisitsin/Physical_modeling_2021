@@ -25,6 +25,16 @@ public:
         P_new[1] = -w2*P_old[0] - b*P_old[1] + F*std::cos(W*t);
     }
 
+    type force(type t, std::vector<type> const& P) const override
+    {
+        return F*std::cos(W*t);
+    }
+
+    type energy(std::vector<type> const& P) const override
+    {
+        return 0.5*(std::pow(w*P[0], 2) + std::pow(P[1], 2));
+    }
+
     const unsigned int get_n() const override {return n;}
 };
 

@@ -25,6 +25,8 @@ def phase(w0, b, W):
     return np.arctan2(b*W, w0**2-W**2)
 
 def force_oscillation(T, W, F0, w0, b, x0, v0):
+    if w0 == W and b == 0:
+        return 0.5*F0/w0*T*np.sin(w0*T) + friction_oscillation(T, w0, b, x0, v0)
     B = amplitude(w0, b, W, F0)
     psi0 = phase(w0, b, W)
     return B*np.cos(W*T-psi0) + friction_oscillation(T, w0, b, x0-B*np.cos(psi0), v0-B*W*np.sin(psi0))

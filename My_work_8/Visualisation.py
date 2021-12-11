@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import oscillation_functions as of
 #%%
-a = 5
+a = 9
 folder = 'Arbitrary_pend_data/'
 solver = ['Heun/', 'Euler/', 'RK4/'][2]
 prefix  = 'Data' + '_'
@@ -30,11 +30,18 @@ if(if_second):
     E2 = Data2[:, 3]
     x02, v02, w02, b2, W2, F02 = np.loadtxt(folder2 + name2, max_rows=1)
 
+
+#%%
+
 #%%
 fig, [[ax1, ax2], [ax3, ax4]] = plt.subplots(2, 2)
 ax1.plot(T, X, label=solver)
-#ax1.plot(T, of.impulses_response(T, W, np.pi/W, F0, w0, b, x0, v0, 100))
-ax1.plot(T, of.cut_cos_response(T, W, F0, w0, b, x0, v0, 100))
+n_harmonics = 5  
+Y1 = of.impulses_response(T, W, np.pi/W, F0, w0, b, x0, v0, n_harmonics)
+Y2 = of.impulses_response(T, W, np.pi/W, F0, w0, b, x0, v0, 100)
+#ax1.plot(T, of.force_oscillation(T, W, F0, w0, b, x0, v0))
+ax1.plot(T, Y1, label = 'analitic')
+#ax1.plot(T, of.cut_cos_response(T, W, F0, w0, b, x0, v0, 100))
 #ax1.plot(T, F)
 
 if(if_second):
@@ -42,13 +49,13 @@ if(if_second):
 ax1.legend(loc='lower right', fontsize=12)
 ax1.set_title('x from t', fontsize = 12)
 ax2.plot(T, V, label=solver)
-ax2.plot(T, F)
+ax2.plot(T, F, label = 'force')
 if(if_second):
     ax2.plot(T2, V2, label=solver2)
 ax2.legend(loc='lower right', fontsize=12)
 ax2.set_title('v from t', fontsize = 12)
 ax3.plot(T, E, label=solver)
-ax3.plot(T, F)
+ax3.plot(T, F, label = 'force')
 if(if_second):
     ax3.plot(T2, E2, label=solver2)
 ax3.legend(loc='lower right', fontsize=12)

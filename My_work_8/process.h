@@ -24,19 +24,19 @@ void process(Exp<type> * exp, type T, type dt, type tau,
         hs.take_exp(exp, P0);
         hs.solve(T, dt, tau);
         save_data(file2, hs.get_time(), hs.get_values(),
-                  hs.get_force(), hs.get_energy(), P0, params, 2);
+                  hs.get_force(), hs.get_energy(), P0, params, exp->get_n());
     }
     if(se){
         s.take_exp(exp, P0);
         s.solve(T, dt, tau);
         save_data(file1, s.get_time(), s.get_values(),
-                  s.get_force(), s.get_energy(), P0, params, 2);
+                  s.get_force(), s.get_energy(), P0, params, exp->get_n());
     }
     if(srk){
         rks.take_exp(exp, P0);
         rks.solve(T, dt, tau);
         save_data(file3, rks.get_time(), rks.get_values(),
-                  rks.get_force(), rks.get_energy(), P0, params, 2);
+                  rks.get_force(), rks.get_energy(), P0, params, exp->get_n());
     }
 }
 #endif // process_h

@@ -34,7 +34,6 @@ void save_data(std::string path, std::vector<type> const &T,
                 out << Force[i] << ' ' << E[i] << '\n';
             }
         }
-        out.close();
     }
 
 int CountLinesInFile(std::string filename)

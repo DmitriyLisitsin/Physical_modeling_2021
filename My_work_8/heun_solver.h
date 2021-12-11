@@ -47,7 +47,6 @@ public:
         for(int i=0; i<n; ++i)
             P_m[i] = P[i] + P_f1[i]*dt;
         expression->f(P_f2, time+dt, P_m);
-        //std::cout << P_f2[0] << ' ' << P_f2[1] << '\n';
         for(int i=0; i<n; ++i)
             P[i] += (P_f1[i] + P_f2[i])*dt*0.5;
     }
@@ -70,7 +69,6 @@ public:
         for(long long int i=0; i<iterations; ++i){
             if (I == write){
                 p_w[j] = P;
-                //std::cout << P[0] << ' ' << P[1] << '\n';
                 force[j] = expression->force(time, P);
                 e[j] = expression->energy(P);
                 t[j] = i*dt;
