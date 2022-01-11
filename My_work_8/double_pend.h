@@ -15,10 +15,13 @@ private:
     type m2;
     type L1;
     type L2;
+    type F0;
+    type W;
     type g;
 
 public:
-    DoublePend(type m10, type m20, type L10, type L20, type g0): m1{m10}, m2{m20}, L1{L10}, L2{L20}, g{g0} {}
+    DoublePend(type m10, type m20, type L10, type L20, type F00, type W0, type g0):
+        m1{m10}, m2{m20}, L1{L10}, L2{L20}, F0{F00}, W{W0}, g{g0} {}
 
     void f(std::vector<type> &P_new, type t, std::vector<type> &P) const override
     {
@@ -30,12 +33,12 @@ public:
 
         P_new[3] = (-(m1+m2)*g*cos(P[0]-P[1])*sin(P[0]) + (m1+m2)*g*sin(P[1]) -
                     (m1+m2)*L1*sin(P[0]-P[1])*pow(P[2], 2) - m2*L2*cos(P[0]-P[1])*sin(P[0]-P[1])*pow(P[3], 2)) /
-                    L2/(-m1 - m2 + m2*pow(cos(P[0]-P[1]), 2));
+                    L2/(-m1 - m2 + m2*pow(cos(P[0]-P[1]), 2)) + force(t, P);
     }
 
     type force(type t, std::vector<type> const& P) const override
     {
-        return 0.0;
+        return F0*sin(W*t);
     }
 
     type energy(std::vector<type> const& P) const override
